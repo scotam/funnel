@@ -1,5 +1,5 @@
 
-# Funnel
+# Funnel [![Build Status](https://api.travis-ci.org/scotam/funnel.png)](http://travis-ci.org/scotam/funnel)
 
 Funnel is a super-small piece of [Ring](https://github.com/ring-clojure) 
 [middleware](https://github.com/ring-clojure/ring/wiki/Concepts#middleware)

@@ -1,7 +1,6 @@
 
 (ns funnel.core
-  (:import (clojure.lang IObj)
-           (java.util.concurrent TimeoutException TimeUnit))
+  (:import (clojure.lang IObj))
   (:require [clojure.core.async :refer [alt!! chan take! timeout]]))
 
 (def defaults {:funnel-size 1
@@ -17,11 +16,10 @@
   (get opts k (get defaults k)))
 
 (defn- with-timeout [ms f]
-  (let [t (future (f))]
-    (try
-      (.get t ms TimeUnit/MILLISECONDS)
-      (finally
-        (future-cancel t)))))
+  (deref
+    (future (f))
+    ms
+    {:status 504}))
 
 (defn- success [res wait-time handler-time]
   (if (instance? IObj res)
@@ -58,8 +56,6 @@
                                          (opt :funnel-handler-timeout)
                                          (partial handler req)))]
               (success res wait-time handler-time))
-            (catch TimeoutException e
-              (error 504 wait-time))
             (finally
               (take! ch (constantly nil))))
           (error 429 wait-time))))))

@@ -32,7 +32,13 @@ an error, you can customize this timeout with...
 
 ## Timeouts
 
-When the funnel wait timeout is exceeded a *429* response is returned.
+When the funnel wait timeout is exceeded a *429* response is returned. Handlers
+that are wrapped by _wrap-funnel_ are also given a default timeout of 60
+seconds. This can be customized using...
+
+```clojure
+(wrap-funnel {:funnel-handler-timeout 30000})
+```
 
 ## Metadata
 

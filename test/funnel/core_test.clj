@@ -5,6 +5,7 @@
 
 (defn wrap-funnel-test [handler]
   (wrap-funnel handler {:funnel-wait-timeout 100
+                        :funnel-handler-timeout 300
                         :funnel-size 1}))
 
 (defmacro funnel [& forms]
@@ -61,6 +62,11 @@
 
   (testing "handler time attached"
     (is (<= 50 (:funnel-handler-time (meta (funnel (Thread/sleep 50) {})))))))
+
+(deftest handlers-are-given-timeouts
+
+  (testing "error returned when handler times out"
+    (is (= {:status 504} (funnel (Thread/sleep 400))))))
 
 ;(run-tests)
 

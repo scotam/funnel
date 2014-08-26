@@ -8,9 +8,6 @@
                :funnel-wait-timeout 30000
                :funnel-handler-timeout 60000})
 
-(defn- millis []
-  (System/currentTimeMillis))
-
 (defn- offer [ch msg ms]
   (alt!!
     [[ch msg]] true
@@ -23,9 +20,16 @@
   (let [t (future (f))]
     (try
       (.get t ms TimeUnit/MILLISECONDS)
-      (catch TimeoutException e
-        (future-cancel t)
-        (throw e)))))
+      (finally
+        (future-cancel t)))))
+
+(defn- success [res wait-time handler-time]
+  (if (instance? IObj res)
+    (with-meta
+      res
+      {:funnel-wait-time wait-time
+       :funnel-handler-time handler-time})
+    res))
 
 (defn- error [status wait-time]
   (with-meta
@@ -35,23 +39,25 @@
 ;; Public
 ;; ------
 
+(defmacro timed [& forms]
+  `(let [start# (System/currentTimeMillis)]
+     (let [res# (do ~@forms)
+           total# (- (System/currentTimeMillis) start#)]
+       [res# total#])))
+
 (defn wrap-funnel [handler & [opts]]
   (let [opt (partial get-opt opts)
         ch (chan (opt :funnel-size))]
     (fn [req]
-      (let [wait-start (millis)
-            check (offer ch req (opt :funnel-wait-timeout))
-            wait-time (- (millis) wait-start)]
+      (let [[check wait-time] (timed
+                                (offer ch req (opt :funnel-wait-timeout)))]
         (if check
           (try
-            (let [handler-start (millis)
-                  res (with-timeout
-                        (opt :funnel-handler-timeout)
-                        (partial handler req))]
-             (if (instance? IObj res)
-               (with-meta res {:funnel-wait-time wait-time
-                               :funnel-handler-time (- (millis) handler-start)})
-               res))
+            (let [[res handler-time] (timed
+                                       (with-timeout
+                                         (opt :funnel-handler-timeout)
+                                         (partial handler req)))]
+              (success res wait-time handler-time))
             (catch TimeoutException e
               (error 504 wait-time))
             (finally

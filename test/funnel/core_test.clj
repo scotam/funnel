@@ -1,7 +1,7 @@
 
 (ns funnel.core-test
   (:require [clojure.test :refer :all]
-            [funnel.core :refer :all]))
+            [funnel.core :refer [wrap-funnel timed]]))
 
 (defn wrap-funnel-test [handler]
   (wrap-funnel handler {:funnel-wait-timeout 100
@@ -13,11 +13,6 @@
       (fn [req#]
         (do ~@forms)))
     {}))
-
-(defmacro timed [& forms]
-  `(let [start# (System/currentTimeMillis)]
-     (do ~@forms)
-     (- (System/currentTimeMillis) start#)))
 
 (deftest requests-can-be-handled
 
@@ -32,8 +27,9 @@
 
   (testing "requests block until complete"
     (let [handler (wrap-funnel-test (fn [req] (Thread/sleep 100)))]
-      (is (<= 200 (timed (handler {})
-                         (handler {}))))))
+      (is (<= 200 (second
+                    (timed (handler {})
+                           (handler {})))))))
 
   (testing "blocked requests timeout"
     (let [handler (wrap-funnel-test (fn [req]

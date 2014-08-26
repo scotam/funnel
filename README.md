@@ -3,7 +3,7 @@
 
 Funnel is a super-small piece of [Ring](https://github.com/ring-clojure) 
 [middleware](https://github.com/ring-clojure/ring/wiki/Concepts#middleware)
-for limiting the number of concurrent.
+for limiting the number of concurrent requests being processed.
 
 ## Usage
 

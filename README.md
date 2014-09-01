@@ -1,5 +1,5 @@
 
-# Funnel [![Build Status](https://api.travis-ci.org/scotam/funnel.png)](http://travis-ci.org/scotam/funnel) [![Dependencies Status](http://clj-deps.herokuapp.com/github/scotam/funnel/status.png)](http://clj-deps.herokuapp.com/github/scotam/funnel)
+# Funnel [![Build Status](https://api.travis-ci.org/scotam/funnel.png)](http://travis-ci.org/scotam/funnel) 
 
 Funnel is a super-small piece of [Ring](https://github.com/ring-clojure) 
 [middleware](https://github.com/ring-clojure/ring/wiki/Concepts#middleware)
@@ -42,7 +42,7 @@ seconds. This can be customized using...
 
 ## Metadata
 
-Funnel adds some metadata onto requests (for the purpose of monitoring, logging
+Funnel adds some metadata on to responses (for the purpose of monitoring, logging
 and debugging).
 
 ### :funnel-wait-time

@@ -51,5 +51,5 @@ This is the amount of time the request had to wait before being processed.
 
 ### :funnel-handler-time
 
-This is the amount of time the request took to process (excluding wait time)
+This is the amount of time the wrapped handler took to process (excluding wait time)
 

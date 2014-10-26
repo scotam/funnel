@@ -1,7 +1,8 @@
 
 (ns funnel.core
   (:import (clojure.lang IObj))
-  (:require [clojure.core.async :refer [alt!! chan take! timeout]]))
+  (:require [funnel.util :refer [timed]]
+            [clojure.core.async :refer [alt!! chan take! timeout]]))
 
 (def defaults {:funnel-size 1
                :funnel-wait-timeout 30000
@@ -36,12 +37,6 @@
 
 ;; Public
 ;; ------
-
-(defmacro timed [& forms]
-  `(let [start# (System/currentTimeMillis)]
-     (let [res# (do ~@forms)
-           total# (- (System/currentTimeMillis) start#)]
-       [res# total#])))
 
 (defn wrap-funnel [handler & [opts]]
   (let [opt (partial get-opt opts)

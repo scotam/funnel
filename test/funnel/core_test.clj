@@ -1,7 +1,8 @@
 
 (ns funnel.core-test
-  (:require [clojure.test :refer :all]
-            [funnel.core :refer [wrap-funnel timed]]))
+  (:require [funnel.core :refer [wrap-funnel]]
+            [funnel.util :refer [timed]]
+            [clojure.test :refer :all]))
 
 (defn wrap-funnel-test [handler]
   (wrap-funnel handler {:funnel-wait-timeout 100
